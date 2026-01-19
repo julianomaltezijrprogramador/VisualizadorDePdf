@@ -188,7 +188,7 @@
     <button class="btn" onclick="baixarPDF()">⬇️ Baixar PDF</button>
   </div>
 
-  <iframe id="pdf-viewer"></iframe>
+  <iframe id="pdf-viewer" allow="fullscreen" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
 
   <footer>
     © 2026 TZ Soluções - Todos os direitos reservados
@@ -263,9 +263,23 @@
     });
 
     // Tratamento de erro do iframe
-    document.getElementById('pdf-viewer').addEventListener('error', () => {
+    const iframe = document.getElementById('pdf-viewer');
+    
+    iframe.addEventListener('error', () => {
       mostrarErro('❌ Erro ao carregar o PDF no visualizador.');
     });
+
+    // Fallback: Se após 3 segundos o PDF não carregar, oferece abrir em nova aba
+    setTimeout(() => {
+      const id = obterIdDaURL();
+      if (id && iframe.classList.contains('ativo')) {
+        // Verifica se o iframe está vazio (fundo preto)
+        const loadingDiv = document.getElementById('loading');
+        if (!loadingDiv.classList.contains('ativo')) {
+          console.log('PDF pode não estar renderizando. Verifique o navegador.');
+        }
+      }
+    }, 3000);
   </script>
 
 </body>
