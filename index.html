@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>TZ Soluções - Visualizar Controle</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: white;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    header h1 {
+      color: #667eea;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .erro {
+      background: #fee;
+      border-left: 4px solid #e53e3e;
+      color: #c53030;
+      padding: 15px;
+      margin: 20px;
+      border-radius: 8px;
+      display: none;
+      text-align: center;
+    }
+
+    .erro.ativo {
+      display: block;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: white;
+      font-size: 18px;
+      display: none;
+    }
+
+    .loading.ativo {
+      display: block;
+    }
+
+    .loading::after {
+      content: '';
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      margin-left: 10px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #pdf-viewer {
+      flex: 1;
+      border: none;
+      margin: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      background: white;
+      display: none;
+    }
+
+    #pdf-viewer.ativo {
+      display: block;
+    }
+
+    .controls {
+      background: white;
+      padding: 15px;
+      margin: 20px 20px 0 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      display: none;
+    }
+
+    .controls.ativo {
+      display: block;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      margin: 0 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .info-id {
+      display: inline-block;
+      background: #f7fafc;
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: #2d3748;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0 10px;
+    }
+
+    footer {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 13px;
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 18px;
+      }
+
+      .controls {
+        padding: 10px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        margin: 3px;
+      }
+
+      .info-id {
+        display: block;
+        margin: 10px 0;
+      }
+
+      #pdf-viewer {
+        margin: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>📄 TZ Soluções - Visualização de Controle</h1>
+  </header>
+
+  <div id="erro" class="erro"></div>
+  
+  <div id="loading" class="loading ativo">Carregando PDF...</div>
+
+  <div id="controls" class="controls">
+    <span class="info-id">ID: <strong id="pdfId">-</strong></span>
+    <button class="btn" onclick="abrirNovaAba()">🔗 Abrir em Nova Aba</button>
+    <button class="btn" onclick="baixarPDF()">⬇️ Baixar PDF</button>
+  </div>
+
+  <iframe id="pdf-viewer"></iframe>
+
+  <footer>
+    © 2026 TZ Soluções - Todos os direitos reservados
+  </footer>
+
+  <script>
+    const API_URL = 'http://179.127.27.205:8888/tz/app/vendas/pdf';
+
+    function mostrarErro(mensagem) {
+      const erroDiv = document.getElementById('erro');
+      const loadingDiv = document.getElementById('loading');
+      const pdfViewer = document.getElementById('pdf-viewer');
+      const controls = document.getElementById('controls');
+
+      erroDiv.innerText = mensagem;
+      erroDiv.classList.add('ativo');
+      loadingDiv.classList.remove('ativo');
+      pdfViewer.classList.remove('ativo');
+      controls.classList.remove('ativo');
+    }
+
+    function mostrarPDF(id, url) {
+      const loadingDiv = document.getElementById('loading');
+      const pdfViewer = document.getElementById('pdf-viewer');
+      const controls = document.getElementById('controls');
+      const pdfIdSpan = document.getElementById('pdfId');
+
+      pdfIdSpan.innerText = id;
+      pdfViewer.src = url;
+      
+      loadingDiv.classList.remove('ativo');
+      pdfViewer.classList.add('ativo');
+      controls.classList.add('ativo');
+    }
+
+    function obterIdDaURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    function abrirNovaAba() {
+      const id = obterIdDaURL();
+      if (id) {
+        window.open(`${API_URL}/${id}`, '_blank');
+      }
+    }
+
+    function baixarPDF() {
+      const id = obterIdDaURL();
+      if (id) {
+        const link = document.createElement('a');
+        link.href = `${API_URL}/${id}`;
+        link.download = `Controle_${id}.pdf`;
+        link.click();
+      }
+    }
+
+    // Carrega o PDF quando a página inicia
+    window.addEventListener('DOMContentLoaded', () => {
+      const id = obterIdDaURL();
+
+      if (!id || id.trim() === '') {
+        mostrarErro('⚠️ Erro: ID do controle não informado na URL.');
+        return;
+      }
+
+      const pdfUrl = `${API_URL}/${id}`;
+
+      // Verifica se o PDF existe fazendo uma requisição HEAD
+      fetch(pdfUrl, { method: 'HEAD' })
+        .then(response => {
+          if (response.ok) {
+            mostrarPDF(id, pdfUrl);
+          } else if (response.status === 404) {
+            mostrarErro('❌ PDF não encontrado. Verifique se o ID está correto.');
+          } else {
+            mostrarErro('❌ Erro ao carregar o PDF. Tente novamente mais tarde.');
+          }
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+          mostrarErro('❌ Erro de conexão. Verifique sua internet e tente novamente.');
+        });
+    });
+
+    // Tratamento de erro do iframe
+    document.getElementById('pdf-viewer').addEventListener('error', () => {
+      mostrarErro('❌ Erro ao carregar o PDF no visualizador.');
+    });
+  </script>
+
+</body>
+</html>
