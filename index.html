@@ -258,21 +258,8 @@
 
       const pdfUrl = `${API_URL}/${id}`;
 
-      // Verifica se o PDF existe fazendo uma requisição HEAD
-      fetch(pdfUrl, { method: 'HEAD' })
-        .then(response => {
-          if (response.ok) {
-            mostrarPDF(id, pdfUrl);
-          } else if (response.status === 404) {
-            mostrarErro('❌ PDF não encontrado. Verifique se o ID está correto.');
-          } else {
-            mostrarErro('❌ Erro ao carregar o PDF. Tente novamente mais tarde.');
-          }
-        })
-        .catch(error => {
-          console.error('Erro:', error);
-          mostrarErro('❌ Erro de conexão. Verifique sua internet e tente novamente.');
-        });
+      // Carrega o PDF diretamente no iframe
+      mostrarPDF(id, pdfUrl);
     });
 
     // Tratamento de erro do iframe
