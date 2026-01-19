@@ -1,8 +1,9 @@
 {
   "rewrites": [
     {
-      "source": "/cotacao",
-      "destination": "http://179.127.27.205:8888/tz/cotacao"
+      "source": "/api/pdf/:id",
+      "destination": "http://179.127.27.205:8888/tz/app/vendas/pdf/:id"
     }
   ]
 }
+
